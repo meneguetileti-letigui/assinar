@@ -455,10 +455,21 @@ async function submeter() {
   try {
     const sb = getSB();
     if (sb) {
+      // Tenta upsert — cria o registro se não existir, atualiza se existir
       const { error } = await sb.from('asc_assinaturas')
-        .update({ status: 'atleta_assinou', assinado_em: now.toISOString() })
-        .eq('token', TOKEN);
+        .upsert({
+          token:        TOKEN,
+          contrato_id:  PAYLOAD.cid ? String(PAYLOAD.cid) : TOKEN,
+          status:       'atleta_assinou',
+          nome_atleta:  PAYLOAD.nomeAtleta || '',
+          email_atleta: PAYLOAD.emailAtleta || '',
+          tipo:         PAYLOAD.tipo || '',
+          assinado_em:  now.toISOString(),
+        }, { onConflict: 'token' });
       if (error) throw error;
+    } else {
+      // Sem Supabase — só mostra confirmação local
+      console.warn('Supabase não disponível — assinatura registrada apenas localmente');
     }
 
     // Mostrar confirmação
