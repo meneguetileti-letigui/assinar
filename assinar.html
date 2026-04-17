@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Assinar Contrato — Alcântara Consultoria Esportiva</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#1a1a2e;min-height:100vh}
+.header{background:#0f4c81;color:#fff;padding:20px 20px 18px}
+.header-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.header-icon{width:46px;height:46px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.header h1{font-size:16px;font-weight:700}
+.header p{font-size:12px;opacity:.75;margin-top:2px}
+.wrap{max-width:680px;margin:0 auto;padding:20px 16px 48px}
+.card{background:#fff;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.07);margin-bottom:14px;overflow:hidden}
+.card-head{padding:14px 18px;border-bottom:1px solid #f1f5f9;display:flex;align-items:center;gap:10px}
+.card-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ci-blue{background:#dbeafe;color:#1d4ed8}
+.ci-green{background:#dcfce7;color:#15803d}
+.ci-orange{background:#ffedd5;color:#c2410c}
+.ci-purple{background:#ede9fe;color:#7c3aed}
+.card-title{font-size:13px;font-weight:600;color:#1a1a2e}
+.card-body{padding:16px 18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fi label{font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.04em;display:block;margin-bottom:2px}
+.fi span{font-size:14px;font-weight:600;color:#1a1a2e}
+.contract-scroll{max-height:300px;overflow-y:auto;font-size:12px;line-height:1.8;text-align:justify;color:#374151}
+.contract-scroll::-webkit-scrollbar{width:3px}
+.contract-scroll::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px}
+.ct{text-align:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;margin-bottom:14px;line-height:1.5}
+.cc{font-weight:700;margin:12px 0 4px;font-size:11.5px;text-transform:uppercase}
+.scroll-hint{text-align:center;font-size:11px;color:#9ca3af;margin-top:8px;padding-top:8px;border-top:1px solid #f1f5f9}
+.accept-box{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px 14px;font-size:12.5px;color:#92400e;line-height:1.6}
+.cb-row{display:flex;align-items:flex-start;gap:10px;margin-top:10px;cursor:pointer}
+.cb-row input[type=checkbox]{width:17px;height:17px;margin-top:1px;cursor:pointer;accent-color:#0f4c81;flex-shrink:0}
+.cb-row label{font-size:13px;color:#374151;cursor:pointer;line-height:1.5}
+/* Assinatura */
+.sig-section{margin-bottom:20px}
+.sig-label{font-size:13px;font-weight:600;color:#1a1a2e;margin-bottom:4px}
+.sig-sub{font-size:12px;color:#9ca3af;margin-bottom:8px}
+.sig-wrap{border:2px dashed #d1d5db;border-radius:10px;background:#fafbfc;overflow:hidden;position:relative;transition:border-color .2s}
+.sig-wrap.active{border-color:#0f4c81;border-style:solid;background:#fff}
+canvas{display:block;width:100%;height:130px;cursor:crosshair;touch-action:none}
+.sig-ph{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;transition:opacity .2s;user-select:none}
+.sig-ph-icon{font-size:24px;opacity:.25;margin-bottom:4px}
+.sig-ph-text{font-size:12px;color:#9ca3af}
+.sig-clear{display:flex;justify-content:flex-end;margin-top:5px}
+.btn-clear{background:none;border:1px solid #e5e7eb;color:#9ca3af;padding:4px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit}
+.btn-clear:hover{border-color:#d1d5db;color:#6b7280}
+.sig-done{background:#d1fae5;border:1px solid #6ee7b7;border-radius:8px;padding:6px 12px;font-size:12px;color:#065f46;font-weight:500;margin-top:6px;display:none;text-align:center}
+/* Botão */
+.btn-submit{width:100%;padding:15px;background:#0f4c81;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.btn-submit:disabled{background:#93c5fd;cursor:not-allowed}
+.btn-submit:hover:not(:disabled){background:#0c3d6b}
+.msg-err{font-size:12px;color:#dc2626;text-align:center;margin-top:8px;display:none}
+/* Confirmação */
+.ok-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;padding:2rem;text-align:center}
+.ok-screen.show{display:flex}
+.ok-circle{width:80px;height:80px;background:#d1fae5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:20px}
+.ok-h{font-size:22px;font-weight:700;color:#1a1a2e;margin-bottom:10px}
+.ok-p{font-size:14px;color:#6b7280;max-width:320px;line-height:1.7;margin-bottom:6px}
+.ok-proto{background:#f0f4f8;border-radius:10px;padding:12px 18px;margin-top:14px;font-size:12px;color:#6b7280}
+.ok-proto strong{display:block;font-family:monospace;font-size:13px;color:#0f4c81;margin-top:3px;word-break:break-all}
+/* Erro */
+.err-screen{background:#fee2e2;border-radius:12px;padding:24px;text-align:center;margin:40px auto;max-width:440px}
+.err-screen h2{color:#991b1b;margin-bottom:8px;font-size:17px}
+.err-screen p{color:#7f1d1d;font-size:13px;line-height:1.6}
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;min-height:60vh;flex-direction:column;gap:14px}
+.spin{width:38px;height:38px;border:3px solid #e2e8f0;border-top-color:#0f4c81;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media(max-width:480px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-icon">⚽</div>
+    <div>
+      <h1>Alcântara Consultoria Esportiva</h1>
+      <p>Portal de assinatura digital de contratos</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <div class="spin"></div>
+    <p style="font-size:13px;color:#6b7280">Carregando contrato...</p>
+  </div>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <div id="main" style="display:none">
+
+    <!-- RESUMO -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-blue">📋</div>
+        <div class="card-title">Resumo do contrato</div>
+      </div>
+      <div class="card-body">
+        <div class="grid2" id="resumo-grid"></div>
+      </div>
+    </div>
+
+    <!-- CONTRATO -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-orange">📄</div>
+        <div class="card-title">Contrato completo — leia antes de assinar</div>
+      </div>
+      <div class="card-body">
+        <div class="contract-scroll" id="contrato-texto"></div>
+        <div class="scroll-hint">↕ Role para ler o contrato completo</div>
+      </div>
+    </div>
+
+    <!-- ACEITE -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-green">✅</div>
+        <div class="card-title">Declaração de aceite</div>
+      </div>
+      <div class="card-body">
+        <div class="accept-box" id="accept-txt"></div>
+        <div class="cb-row">
+          <input type="checkbox" id="cb" onchange="verificarProntos()">
+          <label for="cb">Li o contrato completo e concordo com todos os termos</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ASSINATURAS -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-icon ci-purple">✍️</div>
+        <div class="card-title">Assinaturas</div>
+      </div>
+      <div class="card-body" id="sig-container"></div>
+    </div>
+
+    <!-- BOTÃO -->
+    <button class="btn-submit" id="btn-submit" onclick="submeter()" disabled>
+      <span>✓</span> Confirmar e assinar contrato
+    </button>
+    <p class="msg-err" id="msg-err"></p>
+
+  </div><!-- /main -->
+
+  <!-- CONFIRMAÇÃO -->
+  <div class="ok-screen" id="ok-screen">
+    <div class="ok-circle">✅</div>
+    <div class="ok-h">Contrato assinado!</div>
+    <p class="ok-p" id="ok-nome"></p>
+    <p class="ok-p" style="font-size:13px;color:#9ca3af" id="ok-data"></p>
+    <div class="ok-proto">
+      Protocolo de confirmação:<br>
+      <strong id="ok-token"></strong>
+    </div>
+    <p style="font-size:12px;color:#9ca3af;margin-top:18px;max-width:300px">
+      A Alcântara Consultoria Esportiva foi notificada. Guarde este protocolo.
+    </p>
+  </div>
+
+  <!-- ERRO -->
+  <div id="err-screen" style="display:none">
+    <div class="err-screen">
+      <h2>Link inválido</h2>
+      <p>Este link de assinatura é inválido ou expirou.<br>Solicite um novo link à Alcântara Consultoria Esportiva.</p>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────────────────────
+// As credenciais do Supabase são lidas da URL (?sb_url=...&sb_key=...)
+// ou podem ser fixadas aqui abaixo:
+const SB_URL_FIXO = '';  // ex: 'https://xxxx.supabase.co'
+const SB_KEY_FIXO = '';  // ex: 'eyJ...'
+
+let sbClient = null;
+let PAYLOAD = null;
+let TOKEN   = null;
+
+// Estado das assinaturas
+const SIGS = {
+  atleta: { canvas: null, ctx: null, drawing: false, hasMark: false },
+  resp1:  { canvas: null, ctx: null, drawing: false, hasMark: false },
+  resp2:  { canvas: null, ctx: null, drawing: false, hasMark: false },
+};
+
+function getSB() {
+  if (sbClient) return sbClient;
+  const p   = new URLSearchParams(window.location.search);
+  const url = SB_URL_FIXO || decodeURIComponent(p.get('sb_url') || '');
+  const key = SB_KEY_FIXO || decodeURIComponent(p.get('sb_key') || '');
+  if (url && key) sbClient = supabase.createClient(url, key);
+  return sbClient;
+}
+
+function fD(s) {
+  if (!s) return '—';
+  const p = s.split('-');
+  return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : s;
+}
+
+// ── INICIALIZAR CANVAS ─────────────────────────────────────────────────────────
+function initCanvas(sigId) {
+  const sig = SIGS[sigId];
+  sig.canvas = document.getElementById('cv-' + sigId);
+  if (!sig.canvas) return;
+  sig.ctx = sig.canvas.getContext('2d');
+  sig.ctx.strokeStyle = '#1a1a2e';
+  sig.ctx.lineWidth   = 2.5;
+  sig.ctx.lineCap     = 'round';
+  sig.ctx.lineJoin    = 'round';
+
+  function pos(e) {
+    const r  = sig.canvas.getBoundingClientRect();
+    const sx = sig.canvas.width / r.width;
+    const sy = sig.canvas.height / r.height;
+    const s  = e.touches ? e.touches[0] : e;
+    return { x: (s.clientX - r.left) * sx, y: (s.clientY - r.top) * sy };
+  }
+  function start(e) {
+    e.preventDefault();
+    sig.drawing = true;
+    const p = pos(e);
+    sig.ctx.beginPath(); sig.ctx.moveTo(p.x, p.y);
+    document.getElementById('wrap-' + sigId).classList.add('active');
+  }
+  function draw(e) {
+    if (!sig.drawing) return;
+    e.preventDefault();
+    const p = pos(e);
+    sig.ctx.lineTo(p.x, p.y); sig.ctx.stroke();
+    if (!sig.hasMark) {
+      sig.hasMark = true;
+      const ph = document.getElementById('ph-' + sigId);
+      if (ph) ph.style.opacity = '0';
+      verificarProntos();
+    }
+  }
+  function stop() { sig.drawing = false; }
+
+  sig.canvas.addEventListener('mousedown',  start);
+  sig.canvas.addEventListener('mousemove',  draw);
+  sig.canvas.addEventListener('mouseup',    stop);
+  sig.canvas.addEventListener('mouseleave', stop);
+  sig.canvas.addEventListener('touchstart', start, { passive: false });
+  sig.canvas.addEventListener('touchmove',  draw,  { passive: false });
+  sig.canvas.addEventListener('touchend',   stop);
+}
+
+function limpar(sigId) {
+  const sig = SIGS[sigId];
+  if (!sig.canvas) return;
+  sig.ctx.clearRect(0, 0, sig.canvas.width, sig.canvas.height);
+  sig.hasMark = false;
+  const ph = document.getElementById('ph-' + sigId);
+  if (ph) ph.style.opacity = '1';
+  document.getElementById('wrap-' + sigId).classList.remove('active');
+  verificarProntos();
+}
+
+// ── VERIFICAR SE PODE SUBMETER ─────────────────────────────────────────────────
+function verificarProntos() {
+  const cb = document.getElementById('cb');
+  if (!cb || !cb.checked) { document.getElementById('btn-submit').disabled = true; return; }
+  // Atleta sempre obrigatório
+  if (!SIGS.atleta.hasMark) { document.getElementById('btn-submit').disabled = true; return; }
+  // Resp1 obrigatório se existir
+  if (PAYLOAD.r1n && SIGS.resp1.canvas && !SIGS.resp1.hasMark) {
+    document.getElementById('btn-submit').disabled = true; return;
+  }
+  // Resp2 obrigatório se existir
+  if (PAYLOAD.r2n && SIGS.resp2.canvas && !SIGS.resp2.hasMark) {
+    document.getElementById('btn-submit').disabled = true; return;
+  }
+  document.getElementById('btn-submit').disabled = false;
+}
+
+// ── CAMPO DE ASSINATURA HTML ───────────────────────────────────────────────────
+function sigHtml(id, nome, cargo, obrigatorio) {
+  return `
+    <div class="sig-section">
+      <div class="sig-label">${nome} ${obrigatorio ? '' : '<span style="font-size:11px;color:#9ca3af;font-weight:400">(opcional)</span>'}</div>
+      <div class="sig-sub">${cargo}</div>
+      <div class="sig-wrap" id="wrap-${id}">
+        <canvas id="cv-${id}" width="1200" height="260"></canvas>
+        <div class="sig-ph" id="ph-${id}">
+          <div class="sig-ph-icon">✍️</div>
+          <div class="sig-ph-text">Assine aqui com o dedo ou mouse</div>
+        </div>
+      </div>
+      <div class="sig-clear">
+        <button class="btn-clear" onclick="limpar('${id}')">Limpar</button>
+      </div>
+    </div>`;
+}
+
+// ── RENDERIZAR PÁGINA ──────────────────────────────────────────────────────────
+function render(payload, token) {
+  PAYLOAD = payload;
+  TOKEN   = token;
+
+  const pN = payload.prazo==1?'um':payload.prazo==2?'dois':payload.prazo==3?'três':payload.prazo==4?'quatro':'cinco';
+  const resp2txt = payload.r2n ? `e sua cônjuge/responsável <strong>${payload.r2n}</strong>,` : '';
+
+  // Resumo
+  document.getElementById('resumo-grid').innerHTML = `
+    <div class="fi"><label>Atleta</label><span>${payload.nomeAtleta}</span></div>
+    <div class="fi"><label>CPF</label><span>${payload.cpfAtleta}</span></div>
+    <div class="fi"><label>Tipo</label><span>${payload.tipo}</span></div>
+    <div class="fi"><label>Vigência</label><span>${payload.prazo} ano${payload.prazo!=1?'s':''}</span></div>
+    <div class="fi"><label>Data</label><span>${fD(payload.data)}</span></div>
+    <div class="fi"><label>Local</label><span>${payload.local}</span></div>`;
+
+  // Contrato
+  document.getElementById('contrato-texto').innerHTML = `
+    <div class="ct">INSTRUMENTO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS DE ASSESSORIA MULTIDISCIPLINAR PARA DESENVOLVIMENTO DE CARREIRA E LICENCIAMENTO E USO DE IMAGEM, VOZ, NOME E APELIDO DE ATLETA</div>
+    <p>Pelo presente instrumento particular, as partes:</p>
+    <p style="margin-top:10px"><strong>a)</strong> <strong>${payload.nomeAtleta}</strong>, RG nº ${payload.rgAtleta||'—'}, CPF nº ${payload.cpfAtleta}, nascido(a) em ${fD(payload.nascAtleta)}, representado(a) por <strong>${payload.r1n||'—'}</strong> (${payload.r1p||'Responsável'}) ${resp2txt} residentes em ${payload.endAtleta||'—'}, doravante <strong>ATLETA</strong>;</p>
+    <p style="margin-top:10px"><strong>b)</strong> <strong>ALCÂNTARA CONSULTORIA ESPORTIVA LTDA</strong>, CNPJ 28.965.589/0001-81, representada por ${payload.nomeEmpresa||'Guilherme de Alcântara'}, doravante <strong>ALCÂNTARA</strong>.</p>
+    <div class="cc">Cláusula 1ª – Do Objeto</div>
+    <p>A ALCÂNTARA prestará ao ATLETA serviços de assessoria e consultoria à carreira desportiva de forma exclusiva.</p>
+    <div class="cc">Cláusula 2ª – Das Obrigações da Alcântara</div>
+    <p>2.1. Representar o ATLETA nas negociações de contratos desportivos.</p>
+    <p>2.2. Buscar patrocinadores, apoiadores e parceiros comerciais.</p>
+    <p>2.3. Assessorar o ATLETA em todos os aspectos de sua carreira profissional.</p>
+    <div class="cc">Cláusula 3ª – Das Obrigações do Atleta</div>
+    <p>3.1. Comunicar previamente qualquer negociação ou proposta recebida.</p>
+    <p>3.2. Manter exclusividade de representação com a ALCÂNTARA.</p>
+    <p>3.3. Não firmar contratos sem a anuência da ALCÂNTARA.</p>
+    <div class="cc">Cláusula 4ª – Da Exclusividade</div>
+    <p>O contrato é firmado em caráter exclusivo durante toda a vigência.</p>
+    <div class="cc">Cláusula 6ª – Da Contraprestação</div>
+    <p>6.1. 10% sobre remuneração bruta de contratos desportivos.</p>
+    <p>6.2. 10% sobre contratos publicitários e de patrocínio.</p>
+    <div class="cc">Cláusula 8ª – Do Prazo</div>
+    <p>Vigência de <strong>${payload.prazo} (${pN}) anos</strong> a contar da data de assinatura.</p>
+    <div class="cc">Cláusula 9ª – Da Rescisão e Multa</div>
+    <p>Rescisão antecipada pelo ATLETA sem justo motivo: multa de R$ 2.000.000,00.</p>
+    <div class="cc">Cláusula 11ª – Do Foro</div>
+    <p>Foro da comarca de Bauru/SP.</p>
+    <p style="margin-top:14px;text-align:right"><em>${payload.local}, ${fD(payload.data)}</em></p>
+    <p style="margin-top:4px;color:#9ca3af;font-size:11px">Empresa assinou em: ${payload.dataEmpresa||'—'}</p>`;
+
+  // Aceite
+  document.getElementById('accept-txt').innerHTML =
+    `Ao assinar, <strong>${payload.nomeAtleta}</strong>${payload.r1n ? ' e ' + payload.r1n : ''}${payload.r2n ? ' e ' + payload.r2n : ''} declaram que leram, compreenderam e concordam com todos os termos deste contrato.`;
+
+  // Campos de assinatura
+  let sigsHtml = sigHtml('atleta', payload.nomeAtleta, 'Atleta — assinatura obrigatória', true);
+  if (payload.r1n) {
+    sigsHtml += `<hr style="border:none;border-top:1px solid #f1f5f9;margin:8px 0">`;
+    sigsHtml += sigHtml('resp1', payload.r1n, `${payload.r1p||'Responsável legal'} — assinatura obrigatória`, true);
+  }
+  if (payload.r2n) {
+    sigsHtml += `<hr style="border:none;border-top:1px solid #f1f5f9;margin:8px 0">`;
+    sigsHtml += sigHtml('resp2', payload.r2n, 'Responsável legal — assinatura obrigatória', true);
+  }
+  document.getElementById('sig-container').innerHTML = sigsHtml;
+
+  // Inicializar canvas
+  setTimeout(() => {
+    initCanvas('atleta');
+    if (payload.r1n) initCanvas('resp1');
+    if (payload.r2n) initCanvas('resp2');
+  }, 100);
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('main').style.display     = 'block';
+}
+
+// ── SUBMETER ───────────────────────────────────────────────────────────────────
+async function submeter() {
+  const err = document.getElementById('msg-err');
+  err.style.display = 'none';
+
+  if (!SIGS.atleta.hasMark) {
+    err.textContent = 'O atleta precisa assinar antes de confirmar.';
+    err.style.display = 'block'; return;
+  }
+  if (PAYLOAD.r1n && SIGS.resp1.canvas && !SIGS.resp1.hasMark) {
+    err.textContent = `${PAYLOAD.r1n} (responsável 1) precisa assinar.`;
+    err.style.display = 'block'; return;
+  }
+  if (PAYLOAD.r2n && SIGS.resp2.canvas && !SIGS.resp2.hasMark) {
+    err.textContent = `${PAYLOAD.r2n} (responsável 2) precisa assinar.`;
+    err.style.display = 'block'; return;
+  }
+
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width:18px;height:18px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:sp .7s linear infinite"></div> Registrando...';
+
+  const now  = new Date();
+  const data = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+
+  try {
+    const sb = getSB();
+    if (sb) {
+      const { error } = await sb.from('asc_assinaturas')
+        .update({ status: 'atleta_assinou', assinado_em: now.toISOString() })
+        .eq('token', TOKEN);
+      if (error) throw error;
+    }
+
+    // Mostrar confirmação
+    document.getElementById('main').style.display      = 'none';
+    document.getElementById('ok-nome').textContent     = `${PAYLOAD.nomeAtleta} assinou com sucesso!`;
+    document.getElementById('ok-data').textContent     = 'Registrado em ' + data;
+    document.getElementById('ok-token').textContent    = TOKEN;
+    document.getElementById('ok-screen').classList.add('show');
+
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '<span>✓</span> Confirmar e assinar contrato';
+    err.textContent = 'Erro ao registrar: ' + e.message + '. Tente novamente.';
+    err.style.display = 'block';
+  }
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+(function() {
+  const p        = new URLSearchParams(window.location.search);
+  const dadosB64 = p.get('dados');
+  const token    = p.get('token');
+
+  if (!dadosB64 || !token) {
+    document.getElementById('loading').style.display  = 'none';
+    document.getElementById('err-screen').style.display = 'block';
+    return;
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(decodeURIComponent(escape(atob(dadosB64))));
+  } catch(e) {
+    document.getElementById('loading').style.display  = 'none';
+    document.getElementById('err-screen').style.display = 'block';
+    return;
+  }
+
+  render(payload, token);
+})();
+</script>
+</body>
+</html>
