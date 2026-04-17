@@ -198,8 +198,20 @@ const SIGS = {
 function getSB() {
   if (sbClient) return sbClient;
   const p   = new URLSearchParams(window.location.search);
-  const url = SB_URL_FIXO || decodeURIComponent(p.get('sb_url') || '');
-  const key = SB_KEY_FIXO || decodeURIComponent(p.get('sb_key') || '');
+  // 1. Credenciais fixas no código
+  let url = SB_URL_FIXO;
+  let key = SB_KEY_FIXO;
+  // 2. Credenciais na URL (enviadas pelo sistema automaticamente)
+  if (!url) url = decodeURIComponent(p.get('sb_url') || '');
+  if (!key) key = decodeURIComponent(p.get('sb_key') || '');
+  // 3. Fallback: localStorage (se aberto no mesmo dispositivo do sistema)
+  if (!url || !key) {
+    try {
+      const cfg = JSON.parse(localStorage.getItem('asc_supabase') || '{}');
+      if (!url) url = cfg.url || '';
+      if (!key) key = cfg.key || '';
+    } catch(e) {}
+  }
   if (url && key) sbClient = supabase.createClient(url, key);
   return sbClient;
 }
@@ -325,32 +337,68 @@ function render(payload, token) {
   // Contrato
   document.getElementById('contrato-texto').innerHTML = `
     <div class="ct">INSTRUMENTO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS DE ASSESSORIA MULTIDISCIPLINAR PARA DESENVOLVIMENTO DE CARREIRA E LICENCIAMENTO E USO DE IMAGEM, VOZ, NOME E APELIDO DE ATLETA</div>
-    <p>Pelo presente instrumento particular, as partes:</p>
-    <p style="margin-top:10px"><strong>a)</strong> <strong>${payload.nomeAtleta}</strong>, RG nº ${payload.rgAtleta||'—'}, CPF nº ${payload.cpfAtleta}, nascido(a) em ${fD(payload.nascAtleta)}, representado(a) por <strong>${payload.r1n||'—'}</strong> (${payload.r1p||'Responsável'}) ${resp2txt} residentes em ${payload.endAtleta||'—'}, doravante <strong>ATLETA</strong>;</p>
-    <p style="margin-top:10px"><strong>b)</strong> <strong>ALCÂNTARA CONSULTORIA ESPORTIVA LTDA</strong>, CNPJ 28.965.589/0001-81, representada por ${payload.nomeEmpresa||'Guilherme de Alcântara'}, doravante <strong>ALCÂNTARA</strong>.</p>
-    <div class="cc">Cláusula 1ª – Do Objeto</div>
-    <p>A ALCÂNTARA prestará ao ATLETA serviços de assessoria e consultoria à carreira desportiva de forma exclusiva.</p>
-    <div class="cc">Cláusula 2ª – Das Obrigações da Alcântara</div>
-    <p>2.1. Representar o ATLETA nas negociações de contratos desportivos.</p>
-    <p>2.2. Buscar patrocinadores, apoiadores e parceiros comerciais.</p>
-    <p>2.3. Assessorar o ATLETA em todos os aspectos de sua carreira profissional.</p>
-    <div class="cc">Cláusula 3ª – Das Obrigações do Atleta</div>
-    <p>3.1. Comunicar previamente qualquer negociação ou proposta recebida.</p>
-    <p>3.2. Manter exclusividade de representação com a ALCÂNTARA.</p>
-    <p>3.3. Não firmar contratos sem a anuência da ALCÂNTARA.</p>
-    <div class="cc">Cláusula 4ª – Da Exclusividade</div>
-    <p>O contrato é firmado em caráter exclusivo durante toda a vigência.</p>
-    <div class="cc">Cláusula 6ª – Da Contraprestação</div>
-    <p>6.1. 10% sobre remuneração bruta de contratos desportivos.</p>
-    <p>6.2. 10% sobre contratos publicitários e de patrocínio.</p>
-    <div class="cc">Cláusula 8ª – Do Prazo</div>
-    <p>Vigência de <strong>${payload.prazo} (${pN}) anos</strong> a contar da data de assinatura.</p>
-    <div class="cc">Cláusula 9ª – Da Rescisão e Multa</div>
-    <p>Rescisão antecipada pelo ATLETA sem justo motivo: multa de R$ 2.000.000,00.</p>
-    <div class="cc">Cláusula 11ª – Do Foro</div>
-    <p>Foro da comarca de Bauru/SP.</p>
-    <p style="margin-top:14px;text-align:right"><em>${payload.local}, ${fD(payload.data)}</em></p>
-    <p style="margin-top:4px;color:#9ca3af;font-size:11px">Empresa assinou em: ${payload.dataEmpresa||'—'}</p>`;
+    <p>Pelo presente instrumento particular, as partes abaixo identificadas, de um lado:</p>
+    <p style="margin-top:10px"><strong>a)</strong> <strong>${payload.nomeAtleta}</strong>, portador(a) do RG nº ${payload.rgAtleta||'_____'}, inscrito(a) no CPF nº ${payload.cpfAtleta}, nascido(a) em ${fD(payload.nascAtleta)}, neste ato representado(a) por seu(ua) responsável legal <strong>${payload.r1n||'_____'}</strong> (${payload.r1p||'Responsável'})${resp2txt ? ', ' + resp2txt : ''} residentes e domiciliados em ${payload.endAtleta||'_____'}, doravante denominado(a) simplesmente <strong>ATLETA</strong>;</p>
+    <p style="margin-top:8px">De outro lado:</p>
+    <p style="margin-top:6px"><strong>b)</strong> <strong>ALCÂNTARA CONSULTORIA ESPORTIVA LTDA</strong>, inscrita no CNPJ nº 28.965.589/0001-81, representada por <strong>${payload.nomeEmpresa||'Guilherme de Alcântara'}</strong>, doravante denominada simplesmente <strong>ALCÂNTARA</strong>.</p>
+    <p style="margin-top:10px">Têm entre si justo e contratado o presente instrumento, mediante as seguintes cláusulas e condições:</p>
+
+    <div class="cc">CLÁUSULA 1 – DO OBJETO</div>
+    <p><strong>1.1.</strong> A <strong>ALCÂNTARA</strong> se obriga a prestar todos os serviços de assessoria e consultoria à carreira desportiva do <strong>ATLETA</strong>, com as seguintes características:</p>
+    <p style="margin-left:14px"><strong>a)</strong> Assessorar o <strong>ATLETA</strong>, de forma exclusiva, na discussão, elaboração, formatação e assinatura de contratos no âmbito desportivo, especialmente contrato especial de trabalho desportivo (CETD);</p>
+    <p style="margin-left:14px"><strong>b)</strong> Assessorar o <strong>ATLETA</strong>, de forma exclusiva, na discussão, elaboração, formatação e assinatura de contratos de cessão de direito de uso de imagem, licenciamento de nome, apelido e voz;</p>
+    <p style="margin-left:14px"><strong>c)</strong> Indicar ao <strong>ATLETA</strong>, quando solicitado, serviços de assessoria de imprensa, coaching, assessoria jurídica e marketing pessoal.</p>
+    <p><strong>1.2.</strong> A exclusividade se refere unicamente ao <strong>ATLETA</strong> com relação à <strong>ALCÂNTARA</strong>.</p>
+
+    <div class="cc">CLÁUSULA 2 – DO LICENCIAMENTO DE IMAGEM</div>
+    <p><strong>2.1.</strong> O <strong>ATLETA</strong> licencia à <strong>ALCÂNTARA</strong>, com exclusividade, o direito de uso e exploração comercial do seu nome, apelido esportivo, voz e imagem, nos termos do artigo 87 e 87-A da Lei 9.615/98.</p>
+    <p><strong>2.2.</strong> A <strong>ALCÂNTARA</strong> representará o <strong>ATLETA</strong> exclusivamente na celebração de contratos de cessão de direito de uso de imagem, patrocínio, propaganda, promoção e publicidade.</p>
+    <p><strong>2.3.</strong> O <strong>ATLETA</strong> autoriza a utilização de sua imagem em fotografias, filmes, meios eletrônicos e qualquer mídia, desde que não vá de encontro aos princípios da moral e dos bons costumes.</p>
+    <p><strong>2.4.</strong> A obrigação da <strong>ALCÂNTARA</strong> se resume a envidar esforços para buscar patrocinadores, apoiadores e parceiros comerciais interessados na imagem do <strong>ATLETA</strong>.</p>
+
+    <div class="cc">CLÁUSULA 3 – DO INSTRUMENTO DE MANDATO</div>
+    <p><strong>3.1.</strong> O <strong>ATLETA</strong> se compromete a outorgar Instrumento Particular de Mandato à <strong>ALCÂNTARA</strong>, com poderes necessários para o cumprimento do objeto deste contrato.</p>
+
+    <div class="cc">CLÁUSULA 4 – DAS OBRIGAÇÕES DA ALCÂNTARA</div>
+    <p><strong>4.1.</strong> São obrigações da <strong>ALCÂNTARA</strong>: a) Envidar esforços buscando melhores oportunidades profissionais e comerciais para o <strong>ATLETA</strong>; b) Zelar pelo bem do <strong>ATLETA</strong>, não concretizando nenhum negócio sem sua concordância; c) Manter sigilo sobre informações do <strong>ATLETA</strong>; d) Comunicar previamente o <strong>ATLETA</strong> sobre todos os compromissos agendados.</p>
+
+    <div class="cc">CLÁUSULA 5 – DAS OBRIGAÇÕES DO ATLETA</div>
+    <p><strong>5.1.</strong> São obrigações do <strong>ATLETA</strong>: a) Fornecer informações necessárias à prestação dos serviços; b) Efetuar os pagamentos nos prazos e condições estabelecidos; c) Não fazer comentários contraditórios às informações divulgadas pela <strong>ALCÂNTARA</strong>; d) Não praticar atos que possam ferir sua imagem; e) Comunicar à <strong>ALCÂNTARA</strong> qualquer proposta ou negociação recebida.</p>
+
+    <div class="cc">CLÁUSULA 6 – DA CONTRAPRESTAÇÃO</div>
+    <p><strong>6.1.</strong> Pelos serviços prestados, o <strong>ATLETA</strong> pagará à <strong>ALCÂNTARA</strong>:</p>
+    <p style="margin-left:14px"><strong>a)</strong> 10% (dez por cento) sobre toda a remuneração bruta recebida (salário, bichos, prêmios, luvas e Direito de Arena) oriunda de contrato de trabalho desportivo, no Brasil ou exterior;</p>
+    <p style="margin-left:14px"><strong>b)</strong> 10% (dez por cento) sobre verbas recebidas de contratos publicitários, de propaganda, patrocínio ou qualquer exploração comercial de sua imagem, nome ou voz.</p>
+
+    <div class="cc">CLÁUSULA 7 – DA CONDIÇÃO DE PAGAMENTO</div>
+    <p><strong>7.1.</strong> Os valores serão pagos à <strong>ALCÂNTARA</strong> no prazo máximo de 5 (cinco) dias após o recebimento do benefício pelo <strong>ATLETA</strong>.</p>
+    <p><strong>7.2.</strong> O atraso no pagamento ensejará multa de 10%, juros moratórios de 1% ao mês e correção pelo IGPM/FGV.</p>
+
+    <div class="cc">CLÁUSULA 8 – DO PRAZO</div>
+    <p><strong>8.1.</strong> O presente Contrato terá vigência de <strong>${payload.prazo} (${pN}) anos</strong> a contar da data de assinatura, com cláusula de irrevogabilidade e irretratabilidade.</p>
+    <p><strong>8.2.</strong> O <strong>ATLETA</strong> se obriga a firmar contrato de gerenciamento de carreira com a <strong>ALCÂNTARA</strong> caso firme o primeiro contrato de trabalho desportivo durante a vigência deste instrumento.</p>
+
+    <div class="cc">CLÁUSULA 9 – DA RESCISÃO E MULTA</div>
+    <p><strong>9.1.</strong> Será causa de rescisão: descumprimento de qualquer cláusula; descumprimento da exclusividade; conduta que afete negativamente a imagem do <strong>ATLETA</strong> ou da <strong>ALCÂNTARA</strong>; atraso no pagamento por mais de 60 dias; divulgação de informações confidenciais.</p>
+    <p><strong>9.2.</strong> Na hipótese de rescisão antecipada:</p>
+    <p style="margin-left:14px"><strong>a)</strong> Por culpa ou iniciativa do <strong>ATLETA</strong>: multa de R$ 2.000.000,00 (dois milhões de reais), com juros de 1% ao mês e correção pelo IGP-M/FGV;</p>
+    <p style="margin-left:14px"><strong>b)</strong> Por culpa da <strong>ALCÂNTARA</strong>: multa de 50% das importâncias recebidas do <strong>ATLETA</strong> até o momento do descumprimento.</p>
+    <p><strong>9.3.</strong> Por comum acordo, a rescisão se operará sem multa, mediante documento escrito firmado por ambas as partes.</p>
+
+    <div class="cc">CLÁUSULA 10 – DA INFORMAÇÃO CONFIDENCIAL</div>
+    <p><strong>10.1.</strong> O presente Contrato e todas as informações relacionadas são consideradas Informação Confidencial, não podendo ser divulgadas sem prévia autorização escrita da outra Parte.</p>
+    <p><strong>10.2.</strong> As obrigações de confidencialidade permanecem em vigor durante a vigência do contrato e por 5 (cinco) anos após seu término.</p>
+
+    <div class="cc">CLÁUSULA 11 – DISPOSIÇÕES FINAIS</div>
+    <p><strong>11.1.</strong> O presente instrumento poderá ser modificado mediante termos aditivos assinados por ambas as Partes.</p>
+    <p><strong>11.2.</strong> As Partes declaram que estão livres e desimpedidas para celebrar este contrato e que seus termos não conflitam com qualquer obrigação anterior.</p>
+    <p><strong>11.3.</strong> O <strong>ATLETA</strong> afirma não possuir qualquer contrato com terceiros que possa conflitar com este instrumento.</p>
+    <p><strong>11.4.</strong> A <strong>ALCÂNTARA</strong> assume obrigação de meios, não de resultados, comprometendo-se a desempenhar de forma idônea sua gestão.</p>
+    <p><strong>11.5.</strong> Fica eleito o Foro da Comarca de Bauru - SP para dirimir quaisquer dúvidas oriundas do presente instrumento, renunciando as partes a qualquer outro foro.</p>
+    <p><strong>11.6.</strong> E por estarem justos e contratados, firmam o presente em 2 (duas) vias de igual teor e forma, na presença das testemunhas abaixo.</p>
+
+    <p style="margin-top:16px;text-align:right"><em>${payload.local}, ${fD(payload.data)}</em></p>
+    <p style="margin-top:4px;color:#9ca3af;font-size:11px">Empresa assinou digitalmente em: ${payload.dataEmpresa||'—'} — ${payload.nomeEmpresa||'Guilherme de Alcântara'}</p>`;
 
   // Aceite
   document.getElementById('accept-txt').innerHTML =
