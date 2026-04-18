@@ -456,15 +456,23 @@ async function submeter() {
     const sb = getSB();
     if (sb) {
       // Tenta upsert — cria o registro se não existir, atualiza se existir
+      // Coletar imagens das assinaturas
+      const sigAtleta = SIGS.atleta.canvas ? SIGS.atleta.canvas.toDataURL('image/png') : null;
+      const sigResp1  = SIGS.resp1.canvas  ? SIGS.resp1.canvas.toDataURL('image/png')  : null;
+      const sigResp2  = SIGS.resp2.canvas  ? SIGS.resp2.canvas.toDataURL('image/png')  : null;
+
       const { error } = await sb.from('asc_assinaturas')
         .upsert({
-          token:        TOKEN,
-          contrato_id:  PAYLOAD.cid ? String(PAYLOAD.cid) : TOKEN,
-          status:       'atleta_assinou',
-          nome_atleta:  PAYLOAD.nomeAtleta || '',
-          email_atleta: PAYLOAD.emailAtleta || '',
-          tipo:         PAYLOAD.tipo || '',
-          assinado_em:  now.toISOString(),
+          token:              TOKEN,
+          contrato_id:        PAYLOAD.cid ? String(PAYLOAD.cid) : TOKEN,
+          status:             'atleta_assinou',
+          nome_atleta:        PAYLOAD.nomeAtleta  || '',
+          email_atleta:       PAYLOAD.emailAtleta || '',
+          tipo:               PAYLOAD.tipo        || '',
+          assinado_em:        now.toISOString(),
+          sig_atleta:         sigAtleta,
+          sig_resp1:          sigResp1,
+          sig_resp2:          sigResp2,
         }, { onConflict: 'token' });
       if (error) throw error;
     } else {
