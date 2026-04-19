@@ -520,13 +520,14 @@ async function baixarPDFAtleta() {
 
   // Criar área de renderização temporária
   const area = document.createElement('div');
-  area.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:605px;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:11.5px;line-height:1.75;color:#000;padding:0;box-sizing:border-box';
+  area.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:605px;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.7;color:#000;padding:0;box-sizing:border-box';
   document.body.appendChild(area);
 
   const resp2txt = payload.r2n ? `e sua cônjuge/responsável <strong>${payload.r2n}</strong>,` : '';
 
   area.innerHTML = `
     <div style="text-align:center;margin-bottom:16px">
+      ${payload.logoEmpresa ? `<img src="${payload.logoEmpresa}" style="height:64px;object-fit:contain;display:block;margin:0 auto 10px">` : ''}
       <div style="font-size:12px;font-weight:700;text-transform:uppercase;line-height:1.5">
         INSTRUMENTO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS DE ASSESSORIA MULTIDISCIPLINAR PARA DESENVOLVIMENTO DE CARREIRA E LICENCIAMENTO E USO DE IMAGEM, VOZ, NOME E APELIDO DE ATLETA MENOR
       </div>
@@ -599,12 +600,11 @@ async function baixarPDFAtleta() {
     <div style="margin-top:28px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:24px">
         <div style="text-align:center">
-          <div style="height:44px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px">
-            <span style="font-size:9px;color:#666">Assinado pela empresa em ${payload.dataEmpresa||'—'}</span>
-          </div>
+          ${payload.sigEmpresa ? `<img src="${payload.sigEmpresa}" style="height:40px;max-width:180px;object-fit:contain;display:block;margin:0 auto 4px">` : '<div style="height:44px"></div>'}
           <div style="border-top:1px solid #000;padding-top:5px">
             <div style="font-weight:700;font-size:11px">ALCÂNTARA CONSULTORIA ESPORTIVA LTDA</div>
             <div style="font-size:10px;color:#333">Intermediário — ${payload.nomeEmpresa||'Guilherme de Alcântara'}</div>
+            <div style="font-size:9px;color:#666">Assinado em ${payload.dataEmpresa||'—'}</div>
           </div>
         </div>
         <div style="text-align:center">
@@ -646,13 +646,18 @@ async function baixarPDFAtleta() {
 
 async function gerarPDFDeArea(area, nomeAtleta, btn) {
   try {
+    // Evitar corte de parágrafos entre páginas
+    area.querySelectorAll('p, div').forEach(el => {
+      el.style.pageBreakInside = 'avoid';
+      el.style.breakInside = 'avoid';
+    });
     const canvas = await html2canvas(area, { scale:2, useCORS:true, backgroundColor:'#ffffff', width:605, windowWidth:605 });
     const {jsPDF} = window.jspdf;
     const pdf = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
     const W=160, X=30, Y=30, USABLE=247;
     const cW=canvas.width, cH=canvas.height;
     const PX2MM=W/cW;
-    const UPXMAX=Math.floor(USABLE/PX2MM)-40;
+    const UPXMAX=Math.floor(USABLE/PX2MM);
     let oy=0, pg=0;
     while(oy<cH){
       if(pg>0) pdf.addPage(); pg++;
@@ -660,7 +665,7 @@ async function gerarPDFDeArea(area, nomeAtleta, btn) {
       const tmp=document.createElement('canvas');
       tmp.width=cW; tmp.height=sh;
       tmp.getContext('2d').drawImage(canvas,0,oy,cW,sh,0,0,cW,sh);
-      pdf.addImage(tmp.toDataURL('image/jpeg',0.93),'JPEG',X,Y,W,sh*PX2MM);
+      pdf.addImage(tmp.toDataURL('image/jpeg',0.95),'JPEG',X,Y,W,sh*PX2MM);
       oy+=sh;
     }
     document.body.removeChild(area);
