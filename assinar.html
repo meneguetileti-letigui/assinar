@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Assinar Contrato — Alcântara Consultoria Esportiva</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#1a1a2e;min-height:100vh}
@@ -162,9 +164,14 @@ canvas{display:block;width:100%;height:130px;cursor:crosshair;touch-action:none}
       Protocolo de confirmação:<br>
       <strong id="ok-token"></strong>
     </div>
-    <p style="font-size:12px;color:#9ca3af;margin-top:18px;max-width:300px">
+    <p style="font-size:12px;color:#9ca3af;margin-top:14px;max-width:300px">
       A Alcântara Consultoria Esportiva foi notificada. Guarde este protocolo.
     </p>
+    <button id="btn-baixar-pdf" onclick="baixarPDFAtleta()"
+      style="margin-top:20px;background:#0f4c81;color:#fff;border:none;border-radius:10px;padding:13px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:8px">
+      ⬇ Baixar contrato assinado (PDF)
+    </button>
+    <p style="font-size:11px;color:#9ca3af;margin-top:8px">Salve uma cópia para seus registros</p>
   </div>
 
   <!-- ERRO -->
@@ -492,6 +499,144 @@ async function submeter() {
     btn.innerHTML = '<span>✓</span> Confirmar e assinar contrato';
     err.textContent = 'Erro ao registrar: ' + e.message + '. Tente novamente.';
     err.style.display = 'block';
+  }
+}
+
+// ── GERAR PDF DO ATLETA ────────────────────────────────────────────────────────
+async function baixarPDFAtleta() {
+  const btn = document.getElementById('btn-baixar-pdf');
+  btn.textContent = '⏳ Gerando PDF...';
+  btn.disabled = true;
+
+  // Coletar imagens das assinaturas
+  const sigAtleta = SIGS.atleta.canvas ? SIGS.atleta.canvas.toDataURL('image/png') : null;
+  const sigResp1  = SIGS.resp1.canvas  && SIGS.resp1.hasMark ? SIGS.resp1.canvas.toDataURL('image/png') : null;
+  const sigResp2  = SIGS.resp2.canvas  && SIGS.resp2.hasMark ? SIGS.resp2.canvas.toDataURL('image/png') : null;
+
+  const payload = PAYLOAD;
+  const pN = payload.prazo==1?'um':payload.prazo==2?'dois':payload.prazo==3?'três':payload.prazo==4?'quatro':'cinco';
+  const now = new Date();
+  const dataAssinatura = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+  // Criar área de renderização temporária
+  const area = document.createElement('div');
+  area.style.cssText = 'position:absolute;left:-9999px;top:-9999px;width:605px;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:11.5px;line-height:1.75;color:#000;padding:0;box-sizing:border-box';
+  document.body.appendChild(area);
+
+  const resp2txt = payload.r2n ? `e sua cônjuge/responsável <strong>${payload.r2n}</strong>,` : '';
+
+  area.innerHTML = `
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;text-transform:uppercase;text-align:center;line-height:1.5;margin-bottom:16px">
+        INSTRUMENTO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS DE ASSESSORIA MULTIDISCIPLINAR PARA DESENVOLVIMENTO DE CARREIRA E LICENCIAMENTO E USO DE IMAGEM, VOZ, NOME E APELIDO DE ATLETA
+      </div>
+    </div>
+    <p>Pelo presente instrumento particular, as partes abaixo identificadas, de um lado:</p>
+    <p style="margin-top:8px"><strong>a)</strong> <strong>${payload.nomeAtleta}</strong>, RG nº ${payload.rgAtleta||'—'}, CPF nº ${payload.cpfAtleta}, nascido(a) em ${fD(payload.nascAtleta)}, representado(a) por <strong>${payload.r1n||'—'}</strong> (${payload.r1p||'Responsável'}) ${resp2txt} residentes em ${payload.endAtleta||'—'}, doravante <strong>ATLETA</strong>;</p>
+    <p style="margin-top:8px">De outro lado:</p>
+    <p style="margin-top:6px"><strong>b)</strong> <strong>ALCÂNTARA CONSULTORIA ESPORTIVA LTDA</strong>, CNPJ 28.965.589/0001-81, representada por <strong>${payload.nomeEmpresa||'Guilherme de Alcântara'}</strong>, doravante <strong>ALCÂNTARA</strong>.</p>
+
+    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 1 – DO OBJETO</p>
+    <p><strong>1.1.</strong> A ALCÂNTARA prestará assessoria e consultoria à carreira desportiva do ATLETA, de forma exclusiva, incluindo negociação de contratos desportivos e de imagem.</p>
+
+    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 2 – DO LICENCIAMENTO DE IMAGEM</p>
+    <p><strong>2.1.</strong> O ATLETA licencia à ALCÂNTARA, com exclusividade, o direito de uso de seu nome, apelido, voz e imagem, nos termos da Lei 9.615/98.</p>
+
+    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 6 – DA CONTRAPRESTAÇÃO</p>
+    <p><strong>6.1.a)</strong> 10% sobre remuneração bruta de contratos desportivos.</p>
+    <p><strong>6.1.b)</strong> 10% sobre contratos publicitários e de patrocínio.</p>
+
+    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 8 – DO PRAZO</p>
+    <p>Vigência de <strong>${payload.prazo} (${pN}) anos</strong> a contar da data de assinatura.</p>
+
+    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 9 – DA RESCISÃO E MULTA</p>
+    <p>Rescisão antecipada pelo ATLETA: multa de R$ 2.000.000,00. Por comum acordo: sem multa.</p>
+
+    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 11 – DISPOSIÇÕES FINAIS</p>
+    <p>Foro da Comarca de Bauru - SP para dirimir quaisquer controvérsias.</p>
+
+    <p style="text-align:right;margin-top:20px">${payload.local}, ${fD(payload.data)}</p>
+
+    <!-- ASSINATURAS -->
+    <div style="margin-top:32px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:28px">
+        <!-- Empresa -->
+        <div style="text-align:center">
+          <div style="height:44px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px">
+            <span style="font-size:9px;color:#666">Assinado pela empresa em ${payload.dataEmpresa||'—'}</span>
+          </div>
+          <div style="border-top:1px solid #000;padding-top:5px">
+            <div style="font-weight:700;font-size:11px">ALCÂNTARA CONSULTORIA ESPORTIVA LTDA</div>
+            <div style="font-size:10px;color:#333">Intermediário — ${payload.nomeEmpresa||'Guilherme de Alcântara'}</div>
+          </div>
+        </div>
+        <!-- Atleta -->
+        <div style="text-align:center">
+          ${sigAtleta ? `<img src="${sigAtleta}" style="height:40px;max-width:180px;object-fit:contain;display:block;margin:0 auto 4px">` : '<div style="height:44px"></div>'}
+          <div style="border-top:1px solid #000;padding-top:5px">
+            <div style="font-weight:700;font-size:11px">${payload.nomeAtleta}</div>
+            <div style="font-size:10px;color:#333">Atleta</div>
+            <div style="font-size:9px;color:#666">Assinado em ${dataAssinatura}</div>
+          </div>
+        </div>
+      </div>
+      ${payload.r1n ? `
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:28px">
+        <div style="text-align:center">
+          ${sigResp1 ? `<img src="${sigResp1}" style="height:40px;max-width:180px;object-fit:contain;display:block;margin:0 auto 4px">` : '<div style="height:44px"></div>'}
+          <div style="border-top:1px solid #000;padding-top:5px">
+            <div style="font-weight:700;font-size:11px">${payload.r1n}</div>
+            <div style="font-size:10px;color:#333">Responsável legal (${payload.r1p||'Responsável'})</div>
+            <div style="font-size:9px;color:#666">Assinado em ${dataAssinatura}</div>
+          </div>
+        </div>
+        <div style="text-align:center">
+          ${sigResp2 ? `<img src="${sigResp2}" style="height:40px;max-width:180px;object-fit:contain;display:block;margin:0 auto 4px">` : '<div style="height:44px"></div>'}
+          <div style="border-top:1px solid #000;padding-top:5px">
+            <div style="font-weight:700;font-size:11px">${payload.r2n||'&nbsp;'}</div>
+            <div style="font-size:10px;color:#333">${payload.r2n ? 'Responsável legal' : '&nbsp;'}</div>
+            ${payload.r2n ? `<div style="font-size:9px;color:#666">Assinado em ${dataAssinatura}</div>` : ''}
+          </div>
+        </div>
+      </div>` : ''}
+      <div style="margin-top:16px;background:#f8fafc;border-radius:6px;padding:8px 12px;font-size:9px;color:#666;text-align:center">
+        Protocolo de assinatura digital: ${TOKEN} — ${dataAssinatura}
+      </div>
+    </div>`;
+
+  // Gerar PDF
+  gerarPDFDeArea(area, payload.nomeAtleta, btn);
+}
+
+async function gerarPDFDeArea(area, nomeAtleta, btn) {
+  try {
+    const canvas = await html2canvas(area, { scale:2, useCORS:true, backgroundColor:'#ffffff', width:605, windowWidth:605 });
+    const {jsPDF} = window.jspdf;
+    const pdf = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+    const W=160, X=30, Y=30, USABLE=247;
+    const cW=canvas.width, cH=canvas.height;
+    const PX2MM=W/cW;
+    const UPXMAX=Math.floor(USABLE/PX2MM)-40;
+    let oy=0, pg=0;
+    while(oy<cH){
+      if(pg>0) pdf.addPage(); pg++;
+      const sh=Math.min(UPXMAX,cH-oy);
+      const tmp=document.createElement('canvas');
+      tmp.width=cW; tmp.height=sh;
+      tmp.getContext('2d').drawImage(canvas,0,oy,cW,sh,0,0,cW,sh);
+      pdf.addImage(tmp.toDataURL('image/jpeg',0.93),'JPEG',X,Y,W,sh*PX2MM);
+      oy+=sh;
+    }
+    document.body.removeChild(area);
+    const nome = nomeAtleta.split(' ')[0].toLowerCase().replace(/[^a-z]/g,'');
+    pdf.save(`contrato_assinado_${nome}.pdf`);
+    btn.textContent = '✓ PDF baixado!';
+    setTimeout(()=>{ btn.textContent='⬇ Baixar contrato assinado (PDF)'; btn.disabled=false; }, 3000);
+  } catch(e) {
+    document.body.removeChild(area);
+    btn.textContent = '⬇ Baixar contrato assinado (PDF)';
+    btn.disabled = false;
+    alert('Erro: ' + e.message);
   }
 }
 
