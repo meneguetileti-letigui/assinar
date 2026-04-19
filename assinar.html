@@ -526,41 +526,78 @@ async function baixarPDFAtleta() {
   const resp2txt = payload.r2n ? `e sua cônjuge/responsável <strong>${payload.r2n}</strong>,` : '';
 
   area.innerHTML = `
-    <div style="text-align:center;margin-bottom:20px">
-      <div style="font-size:13px;font-weight:700;text-transform:uppercase;text-align:center;line-height:1.5;margin-bottom:16px">
-        INSTRUMENTO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS DE ASSESSORIA MULTIDISCIPLINAR PARA DESENVOLVIMENTO DE CARREIRA E LICENCIAMENTO E USO DE IMAGEM, VOZ, NOME E APELIDO DE ATLETA
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="font-size:12px;font-weight:700;text-transform:uppercase;line-height:1.5">
+        INSTRUMENTO PARTICULAR DE PRESTAÇÃO DE SERVIÇOS DE ASSESSORIA MULTIDISCIPLINAR PARA DESENVOLVIMENTO DE CARREIRA E LICENCIAMENTO E USO DE IMAGEM, VOZ, NOME E APELIDO DE ATLETA MENOR
       </div>
     </div>
+
     <p>Pelo presente instrumento particular, as partes abaixo identificadas, de um lado:</p>
-    <p style="margin-top:8px"><strong>a)</strong> <strong>${payload.nomeAtleta}</strong>, RG nº ${payload.rgAtleta||'—'}, CPF nº ${payload.cpfAtleta}, nascido(a) em ${fD(payload.nascAtleta)}, representado(a) por <strong>${payload.r1n||'—'}</strong> (${payload.r1p||'Responsável'}) ${resp2txt} residentes em ${payload.endAtleta||'—'}, doravante <strong>ATLETA</strong>;</p>
+    <p style="margin-top:8px"><strong>a)</strong> <strong>${payload.nomeAtleta}</strong>, portador(a) do RG nº ${payload.rgAtleta||'_____'}, inscrito(a) no CPF nº ${payload.cpfAtleta}, nascido(a) em ${fD(payload.nascAtleta)}, neste ato representado(a) por seu(ua) responsável legal <strong>${payload.r1n||'_____'}</strong> (${payload.r1p||'Responsável'})${payload.r2n ? ` e sua cônjuge/responsável <strong>${payload.r2n}</strong>,` : ''} residentes e domiciliados em ${payload.endAtleta||'_____'}, doravante denominado(a) simplesmente <strong>ATLETA</strong>;</p>
     <p style="margin-top:8px">De outro lado:</p>
-    <p style="margin-top:6px"><strong>b)</strong> <strong>ALCÂNTARA CONSULTORIA ESPORTIVA LTDA</strong>, CNPJ 28.965.589/0001-81, representada por <strong>${payload.nomeEmpresa||'Guilherme de Alcântara'}</strong>, doravante <strong>ALCÂNTARA</strong>.</p>
+    <p style="margin-top:6px"><strong>b)</strong> <strong>ALCÂNTARA CONSULTORIA ESPORTIVA LTDA</strong>, pessoa jurídica de direito privado, inscrita no CNPJ nº 28.965.589/0001-81, com sede na Rua Ignacio Alexandre Nasralla, nº1-25, apto 93, bairro Jd. Amalia, Bauru - SP, CEP 17017-260, neste ato representada pelo seu sócio administrador <strong>${payload.nomeEmpresa||'Guilherme de Alcântara'}</strong>, doravante denominada simplesmente <strong>ALCÂNTARA</strong>.</p>
+    <p style="margin-top:8px">Têm entre si justo e contratado o presente instrumento, mediante as seguintes cláusulas e condições:</p>
 
-    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 1 – DO OBJETO</p>
-    <p><strong>1.1.</strong> A ALCÂNTARA prestará assessoria e consultoria à carreira desportiva do ATLETA, de forma exclusiva, incluindo negociação de contratos desportivos e de imagem.</p>
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 1 – DO OBJETO</p>
+    <p><strong>1.1.</strong> A <strong>ALCÂNTARA</strong> se obriga a prestar todos os serviços de assessoria e consultoria à carreira desportiva do <strong>ATLETA</strong>, com as seguintes características:</p>
+    <p style="margin-left:14px"><strong>a)</strong> Assessorar o <strong>ATLETA</strong>, de forma exclusiva, na discussão, elaboração, formatação e assinatura de contratos no âmbito desportivo, especialmente contrato especial de trabalho desportivo (CETD);</p>
+    <p style="margin-left:14px"><strong>b)</strong> Assessorar o <strong>ATLETA</strong>, de forma exclusiva, na discussão, elaboração, formatação e assinatura de contratos de cessão de direito de uso de imagem, licenciamento de nome, apelido e voz;</p>
+    <p style="margin-left:14px"><strong>c)</strong> Indicar ao <strong>ATLETA</strong>, quando solicitado, serviços de assessoria de imprensa, coaching, assessoria jurídica e marketing pessoal.</p>
+    <p><strong>1.2.</strong> A exclusividade na prestação dos serviços se refere unicamente ao <strong>ATLETA</strong> com relação à <strong>ALCÂNTARA</strong>.</p>
 
-    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 2 – DO LICENCIAMENTO DE IMAGEM</p>
-    <p><strong>2.1.</strong> O ATLETA licencia à ALCÂNTARA, com exclusividade, o direito de uso de seu nome, apelido, voz e imagem, nos termos da Lei 9.615/98.</p>
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 2 – DO LICENCIAMENTO DE IMAGEM</p>
+    <p><strong>2.1.</strong> O <strong>ATLETA</strong> licencia à <strong>ALCÂNTARA</strong>, com exclusividade, o direito de uso e exploração comercial do seu nome, apelido esportivo, voz e imagem, nos termos do artigo 87 e 87-A da Lei 9.615/98.</p>
+    <p><strong>2.2.</strong> A <strong>ALCÂNTARA</strong> representará o <strong>ATLETA</strong> exclusivamente na celebração de contratos de cessão de direito de uso de imagem, patrocínio, propaganda, promoção e publicidade.</p>
+    <p><strong>2.3.</strong> O <strong>ATLETA</strong> autoriza a utilização de sua imagem em fotografias, filmes, meios eletrônicos e qualquer mídia existente ou que venha a existir, desde que não vá de encontro aos princípios da moral e dos bons costumes.</p>
+    <p><strong>2.4.</strong> A obrigação da <strong>ALCÂNTARA</strong> se resume a envidar esforços para buscar patrocinadores, apoiadores e parceiros comerciais interessados na imagem do <strong>ATLETA</strong>.</p>
 
-    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 6 – DA CONTRAPRESTAÇÃO</p>
-    <p><strong>6.1.a)</strong> 10% sobre remuneração bruta de contratos desportivos.</p>
-    <p><strong>6.1.b)</strong> 10% sobre contratos publicitários e de patrocínio.</p>
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 3 – DO INSTRUMENTO DE MANDATO</p>
+    <p><strong>3.1.</strong> O <strong>ATLETA</strong> se compromete a outorgar Instrumento Particular de Mandato à <strong>ALCÂNTARA</strong>, com poderes necessários para o cumprimento do objeto deste contrato, incluindo poderes ad negocia et extra.</p>
 
-    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 8 – DO PRAZO</p>
-    <p>Vigência de <strong>${payload.prazo} (${pN}) anos</strong> a contar da data de assinatura.</p>
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 4 – DAS OBRIGAÇÕES DA ALCÂNTARA</p>
+    <p><strong>4.1.</strong> São obrigações da <strong>ALCÂNTARA</strong>: a) Envidar esforços buscando melhores oportunidades profissionais e comerciais para o <strong>ATLETA</strong>; b) Zelar pelo bem do <strong>ATLETA</strong>, não concretizando nenhum negócio sem sua concordância; c) Manter sigilo sobre informações do <strong>ATLETA</strong>; d) Comunicar previamente o <strong>ATLETA</strong> sobre todos os compromissos agendados; e) Responder por danos que seus empregados causarem ao <strong>ATLETA</strong>.</p>
 
-    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 9 – DA RESCISÃO E MULTA</p>
-    <p>Rescisão antecipada pelo ATLETA: multa de R$ 2.000.000,00. Por comum acordo: sem multa.</p>
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 5 – DAS OBRIGAÇÕES DO ATLETA</p>
+    <p><strong>5.1.</strong> São obrigações do <strong>ATLETA</strong>: a) Fornecer informações necessárias à prestação dos serviços; b) Efetuar os pagamentos nos prazos e condições estabelecidos; c) Não fazer comentários contraditórios às informações divulgadas pela <strong>ALCÂNTARA</strong>; d) Não praticar atos que possam ferir sua imagem; e) Comunicar à <strong>ALCÂNTARA</strong> qualquer proposta ou negociação recebida.</p>
 
-    <p style="font-weight:700;margin:14px 0 4px;text-transform:uppercase;font-size:11px">CLÁUSULA 11 – DISPOSIÇÕES FINAIS</p>
-    <p>Foro da Comarca de Bauru - SP para dirimir quaisquer controvérsias.</p>
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 6 – DA CONTRAPRESTAÇÃO</p>
+    <p><strong>6.1.</strong> Pelos serviços prestados, o <strong>ATLETA</strong> pagará à <strong>ALCÂNTARA</strong>:</p>
+    <p style="margin-left:14px"><strong>a)</strong> 10% (dez por cento) sobre toda a remuneração bruta recebida (salário, bichos, prêmios, luvas e Direito de Arena) oriunda de contrato de trabalho desportivo, no Brasil ou exterior;</p>
+    <p style="margin-left:14px"><strong>b)</strong> 10% (dez por cento) sobre verbas recebidas de contratos publicitários, de propaganda, patrocínio ou qualquer exploração comercial de sua imagem, nome ou voz.</p>
 
-    <p style="text-align:right;margin-top:20px">${payload.local}, ${fD(payload.data)}</p>
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 7 – DA CONDIÇÃO DE PAGAMENTO</p>
+    <p><strong>7.1.</strong> Os valores serão pagos à <strong>ALCÂNTARA</strong> no prazo máximo de 5 (cinco) dias após o recebimento do benefício pelo <strong>ATLETA</strong>.</p>
+    <p><strong>7.2.</strong> O atraso no pagamento ensejará multa de 10%, juros moratórios de 1% ao mês e correção pelo IGPM/FGV.</p>
+    <p><strong>7.3.</strong> A contraprestação é igualmente devida sobre valores oriundos de contratos negociados durante a vigência mas recebidos após o seu término.</p>
+
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 8 – DO PRAZO</p>
+    <p><strong>8.1.</strong> O presente Contrato terá vigência de <strong>${payload.prazo} (${pN}) anos</strong> a contar da data de assinatura, com cláusula de irrevogabilidade e irretratabilidade.</p>
+    <p><strong>8.2.</strong> O <strong>ATLETA</strong> se obriga a firmar contrato de gerenciamento de carreira com a <strong>ALCÂNTARA</strong> caso firme o primeiro contrato de trabalho desportivo durante a vigência deste instrumento.</p>
+
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 9 – DA RESCISÃO E MULTA</p>
+    <p><strong>9.1.</strong> Será causa de rescisão: descumprimento de qualquer cláusula; descumprimento da exclusividade; conduta que afete negativamente a imagem do <strong>ATLETA</strong> ou da <strong>ALCÂNTARA</strong>; atraso no pagamento por mais de 60 dias; divulgação de informações confidenciais.</p>
+    <p><strong>9.2.</strong> Na hipótese de rescisão antecipada:</p>
+    <p style="margin-left:14px"><strong>a)</strong> Por culpa ou iniciativa do <strong>ATLETA</strong>: multa de R$ 2.000.000,00 (dois milhões de reais), com juros de 1% ao mês e correção pelo IGP-M/FGV;</p>
+    <p style="margin-left:14px"><strong>b)</strong> Por culpa da <strong>ALCÂNTARA</strong>: multa de 50% das importâncias recebidas do <strong>ATLETA</strong> até o momento do descumprimento.</p>
+    <p><strong>9.3.</strong> Por comum acordo, a rescisão se operará sem multa, mediante documento escrito firmado por ambas as partes.</p>
+
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 10 – DA INFORMAÇÃO CONFIDENCIAL</p>
+    <p><strong>10.1.</strong> O presente Contrato e todas as informações relacionadas são consideradas Informação Confidencial, não podendo ser divulgadas sem prévia autorização escrita da outra Parte.</p>
+    <p><strong>10.2.</strong> As obrigações de confidencialidade permanecem em vigor durante a vigência do contrato e por 5 (cinco) anos após seu término.</p>
+
+    <p style="font-weight:700;margin:12px 0 4px;font-size:11px">CLÁUSULA 11 – DISPOSIÇÕES FINAIS</p>
+    <p><strong>11.1.</strong> O presente instrumento poderá ser modificado mediante termos aditivos assinados por ambas as Partes.</p>
+    <p><strong>11.2.</strong> As Partes declaram que estão livres e desimpedidas para celebrar este contrato.</p>
+    <p><strong>11.3.</strong> O <strong>ATLETA</strong> afirma não possuir qualquer contrato com terceiros que possa conflitar com este instrumento.</p>
+    <p><strong>11.4.</strong> A <strong>ALCÂNTARA</strong> assume obrigação de meios, não de resultados, comprometendo-se a desempenhar de forma idônea sua gestão.</p>
+    <p><strong>11.5.</strong> Fica eleito o Foro da Comarca de Bauru - SP para dirimir quaisquer dúvidas oriundas do presente instrumento.</p>
+    <p><strong>11.6.</strong> E por estarem justos e contratados, firmam o presente em 2 (duas) vias de igual teor e forma, na presença das testemunhas abaixo.</p>
+
+    <p style="text-align:right;margin-top:16px">${payload.local}, ${fD(payload.data)}</p>
 
     <!-- ASSINATURAS -->
-    <div style="margin-top:32px">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:28px">
-        <!-- Empresa -->
+    <div style="margin-top:28px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:24px">
         <div style="text-align:center">
           <div style="height:44px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px">
             <span style="font-size:9px;color:#666">Assinado pela empresa em ${payload.dataEmpresa||'—'}</span>
@@ -570,7 +607,6 @@ async function baixarPDFAtleta() {
             <div style="font-size:10px;color:#333">Intermediário — ${payload.nomeEmpresa||'Guilherme de Alcântara'}</div>
           </div>
         </div>
-        <!-- Atleta -->
         <div style="text-align:center">
           ${sigAtleta ? `<img src="${sigAtleta}" style="height:40px;max-width:180px;object-fit:contain;display:block;margin:0 auto 4px">` : '<div style="height:44px"></div>'}
           <div style="border-top:1px solid #000;padding-top:5px">
@@ -581,7 +617,7 @@ async function baixarPDFAtleta() {
         </div>
       </div>
       ${payload.r1n ? `
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:28px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:24px">
         <div style="text-align:center">
           ${sigResp1 ? `<img src="${sigResp1}" style="height:40px;max-width:180px;object-fit:contain;display:block;margin:0 auto 4px">` : '<div style="height:44px"></div>'}
           <div style="border-top:1px solid #000;padding-top:5px">
@@ -599,12 +635,12 @@ async function baixarPDFAtleta() {
           </div>
         </div>
       </div>` : ''}
-      <div style="margin-top:16px;background:#f8fafc;border-radius:6px;padding:8px 12px;font-size:9px;color:#666;text-align:center">
+      <div style="margin-top:12px;background:#f8fafc;border-radius:6px;padding:8px 12px;font-size:9px;color:#666;text-align:center">
         Protocolo de assinatura digital: ${TOKEN} — ${dataAssinatura}
       </div>
     </div>`;
 
-  // Gerar PDF
+    // Gerar PDF
   gerarPDFDeArea(area, payload.nomeAtleta, btn);
 }
 
