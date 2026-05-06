@@ -171,12 +171,13 @@
   .pdf-body b{font-weight:bold}
   .pdf-clause{font-weight:bold;margin-top:16px;margin-bottom:6px;font-size:11.5px;display:block}
   .pdf-sigs{margin-top:36px}
-  .pdf-sig-row{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:28px}
+  .pdf-sig-row{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:20px}
   .pdf-sig-line{text-align:center;font-size:11px}
   .pdf-sig-name{font-weight:bold;font-size:11px;margin-bottom:2px}
   .pdf-sig-role{font-size:10px;color:#333}
-  .sig-sp{height:50px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:0}
-  .sig-ln{border-top:1.5px solid #000;padding-top:5px;margin-top:0}
+  .sig-sp{height:46px;display:flex;align-items:flex-end;justify-content:center}
+  .sig-sp-sm{height:28px;display:flex;align-items:flex-end;justify-content:center}
+  .sig-ln{border-top:1.5px solid #000;padding-top:4px;margin-top:0}
   .pdf-date{text-align:right;margin-bottom:24px;font-size:11.5px}
   .pdf-wit{margin-top:24px}
   .pdf-wit-title{font-size:11.5px;font-weight:bold;margin-bottom:14px}
@@ -1674,49 +1675,33 @@ function gerarPDF(id){
       <div class="pdf-sigs">
         <div class="pdf-sig-row">
           <div class="pdf-sig-line">
-            <div class="sig-sp">${c.assinaturaEmpresaImg?`<img src="${c.assinaturaEmpresaImg}" style="height:46px;max-width:180px;object-fit:contain">`:``}</div>
-            <div class="sig-ln">
-              <div class="pdf-sig-name">${EMPRESA}</div>
-              <div class="pdf-sig-role">Intermediário — ${c.assinaturaEmpresaNome||RESP_EMPRESA}</div>
-              ${c.assinaturaEmpresaData?`<div style="font-size:9px;color:#666">Assinado em ${c.assinaturaEmpresaData}</div>`:``}
-            </div>
+            <div class="sig-sp">${c.assinaturaEmpresaImg?`<img src="${c.assinaturaEmpresaImg}" style="height:42px;max-width:180px;object-fit:contain">`:``}</div>
+            <div class="sig-ln"><div class="pdf-sig-name">${EMPRESA}</div><div class="pdf-sig-role">Intermediário — ${c.assinaturaEmpresaNome||RESP_EMPRESA}</div>${c.assinaturaEmpresaData?`<div style="font-size:9px;color:#666">Assinado em ${c.assinaturaEmpresaData}</div>`:``}</div>
           </div>
           <div class="pdf-sig-line">
-            <div class="sig-sp">${c.assinaturaAtletaImg?`<img src="${c.assinaturaAtletaImg}" style="height:46px;max-width:180px;object-fit:contain">`:``}</div>
-            <div class="sig-ln">
-              <div class="pdf-sig-name">${a.nome}</div>
-              <div class="pdf-sig-role">Atleta — CPF: ${a.cpf}</div>
-              ${c.assinadoEm?`<div style="font-size:9px;color:#666">Assinado em ${c.assinadoEm}</div>`:``}
-            </div>
+            <div class="sig-sp">${c.assinaturaAtletaImg?`<img src="${c.assinaturaAtletaImg}" style="height:42px;max-width:180px;object-fit:contain">`:``}</div>
+            <div class="sig-ln"><div class="pdf-sig-name">${a.nome}</div><div class="pdf-sig-role">Atleta — CPF: ${a.cpf}</div>${c.assinadoEm?`<div style="font-size:9px;color:#666">Assinado em ${c.assinadoEm}</div>`:``}</div>
           </div>
         </div>
         ${a.r1n?`<div class="pdf-sig-row">
           <div class="pdf-sig-line">
-            <div class="sig-sp">${c.assinaturaResp1Img?`<img src="${c.assinaturaResp1Img}" style="height:46px;max-width:180px;object-fit:contain">`:``}</div>
-            <div class="sig-ln">
-              <div class="pdf-sig-name">${a.r1n}</div>
-              <div class="pdf-sig-role">Responsável legal${a.r1p?" — "+a.r1p:""}</div>
-              ${c.assinadoEm?`<div style="font-size:9px;color:#666">Assinado em ${c.assinadoEm}</div>`:``}
-            </div>
+            <div class="sig-sp">${c.assinaturaResp1Img?`<img src="${c.assinaturaResp1Img}" style="height:42px;max-width:180px;object-fit:contain">`:``}</div>
+            <div class="sig-ln"><div class="pdf-sig-name">${a.r1n}</div><div class="pdf-sig-role">Responsável legal${a.r1p?" — "+a.r1p:""}</div>${c.assinadoEm?`<div style="font-size:9px;color:#666">Assinado em ${c.assinadoEm}</div>`:``}</div>
           </div>
           <div class="pdf-sig-line">
-            <div class="sig-sp">${c.assinaturaResp2Img?`<img src="${c.assinaturaResp2Img}" style="height:46px;max-width:180px;object-fit:contain">`:``}</div>
-            <div class="sig-ln">
-              <div class="pdf-sig-name">${a.r2n||"\u00a0"}</div>
-              <div class="pdf-sig-role">${a.r2n?"Responsável legal":"\u00a0"}</div>
-              ${a.r2n&&c.assinadoEm?`<div style="font-size:9px;color:#666">Assinado em ${a.r2n&&c.assinadoEm}</div>`:``}
-            </div>
+            <div class="sig-sp">${c.assinaturaResp2Img?`<img src="${c.assinaturaResp2Img}" style="height:42px;max-width:180px;object-fit:contain">`:``}</div>
+            <div class="sig-ln"><div class="pdf-sig-name">${a.r2n||"&nbsp;"}</div><div class="pdf-sig-role">${a.r2n?"Responsável legal":"&nbsp;"}</div>${a.r2n&&c.assinadoEm?`<div style="font-size:9px;color:#666">Assinado em ${c.assinadoEm}</div>`:``}</div>
           </div>
-        </div>`:``}
-        <div class="pdf-wit">
+        </div>`:""}
+        <div class="pdf-wit" style="margin-top:12px">
           <div class="pdf-wit-title">TESTEMUNHA:</div>
-          <div class="pdf-wit-row">
+          <div class="pdf-wit-row" style="margin-bottom:0">
             <div class="pdf-sig-line">
-              <div class="sig-sp"></div>
+              <div class="sig-sp-sm"></div>
               <div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div>
             </div>
             <div class="pdf-sig-line">
-              <div class="sig-sp"></div>
+              <div class="sig-sp-sm"></div>
               <div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div>
             </div>
           </div>
@@ -2145,7 +2130,7 @@ async function htmlParaPDF(htmlContent, nomeArquivo) {
 function assSigParc(img, nome, papel, dataAssinada) {
   return '<div class="pdf-sig-line">'
     + '<div class="sig-sp">'
-    + (img ? '<img src="'+img+'" style="height:46px;max-width:180px;object-fit:contain">' : '')
+    + (img ? '<img src="'+img+'" style="height:42px;max-width:180px;object-fit:contain">' : '')
     + '</div>'
     + '<div class="sig-ln">'
     + '<div class="pdf-sig-name">' + nome + '</div>'
@@ -2165,7 +2150,7 @@ async function gerarPDFParceria(c, a) {
 
   // Modelo real: Instrumento Particular de Parceria e Outras Avenças
   const H = [];
-  H.push('<style>.pdf-body{font-size:10.8px!important;line-height:1.55!important}.pdf-body p{margin-bottom:5px!important;font-size:10.8px!important}.pdf-clause{font-size:10.8px!important;margin-top:8px!important;margin-bottom:4px!important}.pdf-sigs{margin-top:10px!important}.pdf-sig-row{gap:12px!important}.pdf-wit{margin-top:10px!important}</style>');
+  H.push('<style>.pdf-body{font-size:10.8px!important;line-height:1.5!important}.pdf-body p{margin-bottom:4px!important;font-size:10.8px!important}.pdf-clause{font-size:10.8px!important;margin-top:6px!important;margin-bottom:3px!important}.pdf-sigs{margin-top:8px!important}.pdf-sig-row{gap:10px!important;margin-bottom:8px!important}.pdf-wit{margin-top:8px!important}</style>');
   H.push('<div class="pdf-logo"><img src="' + LOGO + '" alt="Alcântara Sport Consulting"></div>');
   H.push('<div class="pdf-title">INSTRUMENTO PARTICULAR DE PARCERIA E OUTRAS AVENÇAS</div>');
   H.push('<div class="pdf-body">');
@@ -2237,7 +2222,7 @@ async function gerarPDFParceria(c, a) {
   H.push('<div class="pdf-sig-line">' + (a.r2n ? '<div style="border-top:1px solid #000;padding-top:47px"><div class="pdf-sig-name">'+a.r2n+'</div><div class="pdf-sig-role">Responsável</div></div>' : '') + '</div>');
   H.push('</div>');
   H.push('</div>');
-  H.push('<div class="pdf-wit" style="margin-top:20px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row"><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ___________________<br>CPF: ____________________</div></div><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ___________________<br>CPF: ____________________</div></div></div></div>');
+  H.push('<div class="pdf-wit" style="margin-top:12px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row" style="margin-bottom:0"><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ___________________<br>CPF: ____________________</div></div><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ___________________<br>CPF: ____________________</div></div></div></div>');
   H.push('</div>');
 
   const htmlParceria = H.join('\n');
@@ -2374,12 +2359,11 @@ function gerarHTMLContratoAtleta(c, a) {
   + '<p><strong>11.9.</strong> &nbsp;Fica eleito o Foro da Comarca de São Paulo — SP, independentemente de outros, por mais privilegiados que sejam, para dirimir eventuais dúvidas ou controvérsias oriundas do presente Instrumento.</p>'
   + '<p><strong>11.10.</strong> &nbsp;E por estarem justos e contratados firmam o presente em 2 (duas) vias de igual teor e forma, para um só efeito, vigorando a partir desta data em toda sua plenitude.</p>'
   + '<div class="pdf-date">' + (c.local||'São Paulo') + ', ' + fD(c.data) + '</div>'
-    + '<div class="pdf-sigs" style="margin-top:16px">'
-  + '<div style="text-align:center;margin-bottom:24px">'
-  + '<div style="min-width:260px;max-width:300px;display:inline-block">'
-  + '<div class="sig-sp">' + (c.parceriaAssinaturaEmpresaImg ? '<img src="'+c.parceriaAssinaturaEmpresaImg+'" style="height:46px;max-width:180px;object-fit:contain">' : '') + '</div>'
-  + '<div class="sig-ln">'
-  + '<div class="pdf-sig-name">' + EMPRESA + '</div>'
+    + '<div class="pdf-sigs" style="margin-top:12px">'
+  + '<div style="text-align:center;margin-bottom:16px">'
+  + '<div style="min-width:240px;max-width:280px;display:inline-block">'
+  + '<div class="sig-sp">' + (c.parceriaAssinaturaEmpresaImg ? '<img src="'+c.parceriaAssinaturaEmpresaImg+'" style="height:42px;max-width:180px;object-fit:contain">' : '') + '</div>'
+  + '<div class="sig-ln"><div class="pdf-sig-name">' + EMPRESA + '</div>'
   + '<div class="pdf-sig-role">Intermediário — ' + RESP_EMPRESA + '</div>'
   + (c.parceriaAssinadaEm ? '<div style="font-size:9px;color:#666">Assinado em ' + c.parceriaAssinadaEm + '</div>' : '')
   + '</div></div></div>'
@@ -2387,11 +2371,11 @@ function gerarHTMLContratoAtleta(c, a) {
   + assSigParc(c.parceriaAssinaturaParceiroImg, p.nome, 'Parceiro — ' + p.repr, c.parceriaAssinadaEm)
   + assSigParc(c.parceriaAssinaturaAtletaImg, a.nome, 'Atleta — CPF: ' + a.cpf, c.parceriaAssinadaEm)
   + '</div>'
-  + (a.r1n ? '<div class="pdf-sig-row" style="margin-top:4px">'
+  + (a.r1n ? '<div class="pdf-sig-row">'
       + assSigParc(c.parceriaAssinaturaResp1Img, a.r1n, 'Responsável legal' + (a.r1p?' — '+a.r1p:''), c.parceriaAssinadaEm)
       + (a.r2n ? assSigParc(c.parceriaAssinaturaResp2Img, a.r2n, 'Responsável legal', c.parceriaAssinadaEm) : '<div></div>')
       + '</div>' : '')
-  + '<div class="pdf-wit" style="margin-top:20px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row"><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div></div></div>'
+  + '<div class="pdf-wit" style="margin-top:12px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row" style="margin-bottom:0"><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div></div></div>'
   + '</div>';
 }
 
@@ -2675,7 +2659,7 @@ async function gerarPDFParceiraComAssinaturas(c, a, p) {
       + assSigParc(c.parceriaAssinaturaResp1Img, a.r1n, 'Responsável — ' + (a.r1p||'Responsável'), c.parceriaAssinadaEm)
       + (a.r2n ? assSigParc(c.parceriaAssinaturaResp2Img, a.r2n, 'Responsável', c.parceriaAssinadaEm) : '<div></div>')
       + '</div>' : '')
-        + '<div class="pdf-wit" style="margin-top:20px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row"><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ___________________<br>CPF: ____________________</div></div><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ___________________<br>CPF: ____________________</div></div></div></div>'
+        + '<div class="pdf-wit" style="margin-top:12px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row" style="margin-bottom:0"><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ___________________<br>CPF: ____________________</div></div><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ___________________<br>CPF: ____________________</div></div></div></div>'
     + '</div></div>';
 
   try {
@@ -2921,7 +2905,7 @@ function gerarPDFJogadorProfissional(c, a){
           </div>
         </div>
       </div>
-      <div class="pdf-wit" style="margin-top:20px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row"><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div></div></div>
+      <div class="pdf-wit" style="margin-top:12px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row" style="margin-bottom:0"><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div></div></div>
     </div>`;
 
   pdfArea.innerHTML = `
@@ -3274,7 +3258,7 @@ async function gerarPDFBase64(c, a) {
               </div>
             </div>
           </div>`:''}
-          <div class="pdf-wit" style="margin-top:20px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row"><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div><div class="pdf-sig-line"><div class="sig-sp"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div></div></div>
+          <div class="pdf-wit" style="margin-top:12px"><div class="pdf-wit-title">TESTEMUNHA:</div><div class="pdf-wit-row" style="margin-bottom:0"><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>1.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div><div class="pdf-sig-line"><div class="sig-sp-sm"></div><div class="sig-ln" style="text-align:left"><strong>2.</strong> <span style="display:inline-block;width:80%;border-bottom:1px solid #000">&nbsp;</span><br>Nome: ______________________________<br>CPF: _______________________________</div></div></div></div>
         </div>
       </div>`;
 
