@@ -1807,13 +1807,12 @@ function gerarPDF(id){
         pdf.line(X_MM, footerY - 4, X_MM + W_MM, footerY - 4);
         pdf.setFontSize(7);
         pdf.setTextColor(120, 120, 120);
-        // Lado esquerdo: dados da empresa
+        // Dados da empresa (centralizado, uma única vez)
         pdf.setFontSize(6.5);
         pdf.text('ALCÂNTARA CONSULTORIA ESPORTIVA EIRELI  ·  CNPJ: 28.965.589/0001-81', 105, footerY-3, {align:'center'});
-        pdf.text('Rua Ignacio Alexandre Nasrala, nº 1-25, Bauru-SP  ·  CEP: 17017-260  ·  asc-sportconsulting@hotmail.com  ·  www.alcantarasport.com', 105, footerY, {align:'center'});
+        pdf.text('Rua Ignacio Alexandre Nasralla, nº 1-25, Bauru-SP  ·  CEP: 17017-260  ·  asc-sportconsulting@hotmail.com  ·  www.alcantarasport.com', 105, footerY, {align:'center'});
+        // Número de página (lado direito)
         pdf.setFontSize(7);
-        pdf.text('Rua Ignacio Alexandre Nasralla, nº 1-25, Bauru-SP CEP 17017-260 · asc-sportconsulting@hotmail.com · www.alcantarasport.com', X_MM, footerY + 3.5);
-        // Lado direito: número de página
         pdf.text(`Página ${page} de ${totalPages}`, X_MM + W_MM, footerY, { align: 'right' });
         pdf.setTextColor(0, 0, 0);
         // ────────────────────────────────────────────────────────────────────
@@ -2114,7 +2113,7 @@ async function htmlParaPDF(htmlContent, nomeArquivo) {
     pdf.setTextColor(130, 130, 130);
     pdf.setFontSize(6.5);
     pdf.text('ALCÂNTARA CONSULTORIA ESPORTIVA EIRELI  ·  CNPJ: 28.965.589/0001-81', 105, 286, {align:'center'});
-    pdf.text('Rua Ignacio Alexandre Nasrala, nº 1-25, Bauru-SP  ·  CEP: 17017-260  ·  asc-sportconsulting@hotmail.com  ·  www.alcantarasport.com', 105, 289.5, {align:'center'});
+    pdf.text('Rua Ignacio Alexandre Nasralla, nº 1-25, Bauru-SP  ·  CEP: 17017-260  ·  asc-sportconsulting@hotmail.com  ·  www.alcantarasport.com', 105, 289.5, {align:'center'});
     pdf.setFontSize(7);
     pdf.text('Página ' + page, X_MM + W_MM, 289.5, {align:'right'});
     pdf.setTextColor(0, 0, 0);
@@ -3031,9 +3030,8 @@ function gerarPDFJogadorProfissional(c, a){
         pdf.setFontSize(7);pdf.setTextColor(120,120,120);
         pdf.setFontSize(6.5);
         pdf.text('ALCÂNTARA CONSULTORIA ESPORTIVA EIRELI  ·  CNPJ: 28.965.589/0001-81', 105, footY-3, {align:'center'});
-        pdf.text('Rua Ignacio Alexandre Nasrala, nº 1-25, Bauru-SP  ·  CEP: 17017-260  ·  asc-sportconsulting@hotmail.com  ·  www.alcantarasport.com', 105, footY, {align:'center'});
+        pdf.text('Rua Ignacio Alexandre Nasralla, nº 1-25, Bauru-SP  ·  CEP: 17017-260  ·  asc-sportconsulting@hotmail.com  ·  www.alcantarasport.com', 105, footY, {align:'center'});
         pdf.setFontSize(7);
-        pdf.text('Rua Ignacio Alexandre Nasralla, nº 1-25, Bauru-SP CEP 17017-260 · asc-sportconsulting@hotmail.com · www.alcantarasport.com',X_MM,footY+3.5);
         pdf.text(`Página ${page} de ${total}`,X_MM+W_MM,footY,{align:'right'});
         pdf.setTextColor(0,0,0);
         offsetY=corte;
